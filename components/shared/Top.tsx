@@ -20,12 +20,12 @@ const Top = () => {
             </div>
             <SignedIn>
 
-            <div className='purple-dark'>
+            <div className='purple-dark px-10'>
             <UserButton showName />
             </div>
             </SignedIn>
             <SignedOut>
-            <Button asChild className="button bg-purple-gradient bg-cover">
+            <Button asChild className="mx-10 button bg-purple-gradient bg-cover">
               <Link href="/sign-in">Log in</Link>
             </Button>
           </SignedOut>
