@@ -14,7 +14,7 @@ const Sidebar = () => {
       <div className="flex size-full flex-col gap-4">
         <Link href="/" className="sidebar-logo">
           <Image
-            src="/assets/images/logo-text.svg"
+            src="/assets/images/logo-white.png"
             alt="logo"
             width={100}
             height={28}
@@ -31,7 +31,7 @@ const Sidebar = () => {
                     key={link.route}
                     className={`sidebar-nav_element group ${
                       isActive
-                        ? "bg-purple-gradient text-white"
+                        ? " text-white"
                         : "text-gray-800"
                     }`}
                   >
@@ -58,7 +58,7 @@ const Sidebar = () => {
                     key={link.route}
                     className={`sidebar-nav_element group ${
                       isActive
-                        ? "bg-purple-gradient text-white"
+                        ? " text-white"
                         : "text-gray-800"
                     }`}
                   >
@@ -81,7 +81,7 @@ const Sidebar = () => {
             </ul>
           </SignedIn>
           <SignedOut>
-            <Button asChild className="button bg-purple-gradient bg-cover">
+            <Button asChild className="button  bg-cover">
               <Link href="/sign-in">Log in</Link>
             </Button>
           </SignedOut>
