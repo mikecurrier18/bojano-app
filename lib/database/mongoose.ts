@@ -17,7 +17,6 @@ export const connectToDatabase = async () => {
   cached.promise =
     cached.promise ||
     mongoose.connect(MONGODB_URL, {
-      dbName: "bojano-portal-users",
       bufferCommands: false,
     });
     
