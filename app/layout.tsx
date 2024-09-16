@@ -11,8 +11,8 @@ variable: '--font-ibm-plex'
 });
 
 export const metadata: Metadata = {
-  title: "Messing around",
-  description: "Just building this app for fun",
+  title: "Bojano Homes Owner Portal",
+  description: "Bojano Homes Owner Portal",
 };
 
 export default function RootLayout({
