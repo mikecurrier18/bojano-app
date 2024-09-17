@@ -31,8 +31,8 @@ const Sidebar = () => {
                     key={link.route}
                     className={`sidebar-nav_element group ${
                       isActive
-                        ? " text-white"
-                        : "text-gray-800"
+                        ? " text-[#493857]"
+                        : "text-[#493857]"
                     }`}
                   >
                     <Link className="sidebar-link" href={link.route}>
@@ -59,7 +59,7 @@ const Sidebar = () => {
                     className={`sidebar-nav_element group ${
                       isActive
                         ? " text-white"
-                        : "text-gray-800"
+                        : "text-[#493857]"
                     }`}
                   >
                     <Link className="sidebar-link" href={link.route}>

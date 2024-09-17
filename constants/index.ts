@@ -1,8 +1,28 @@
 export const navLinks = [
   {
-    label: "Home",
+    label: "Summary",
     route: "/",
-    icon: "/assets/icons/home.svg",
+    icon: "/assets/icons/summary-icon.svg",
+  },
+  {
+    label: "Statements",
+    route: "/",
+    icon: "/assets/icons/statements-icon.svg",
+  },
+  {
+    label: "Performance",
+    route: "/",
+    icon: "/assets/icons/performance-icon.svg",
+  },
+  {
+    label: "Calendar",
+    route: "/",
+    icon: "/assets/icons/calendar-icon.svg",
+  },
+  {
+    label: "Maintenance",
+    route: "/2",
+    icon: "/assets/icons/maintenance-icon.svg",
   },
   
 ];

@@ -6,19 +6,16 @@ import Top from '@/components/shared/Top'
 const Layout = ({children}: {children: React.ReactNode}) => {
   return (
 <main className='root'>
-<div className="hidden lg:block">
-          <Top/>
-          </div>
-          <div className='flex mt-12'>
+
 
         <Sidebar/>
+        <div className='root-container'>
         <MobileNav/>
-        <div className=' root-container'>
             <div className='wrapper'>
                 {children}
             </div>
         </div>
-          </div>
+        
     </main>
   )
 }

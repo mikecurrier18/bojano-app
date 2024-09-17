@@ -8,7 +8,7 @@ const Home = async ({ searchParams }: SearchParamProps) => {
 
   return (
     <>
-      <section className="home">
+      <section className="home mt-10">
         <h1 className="text-5xl text-center font-bold text-gray-600">All your information in one place</h1>
       </section>
 
