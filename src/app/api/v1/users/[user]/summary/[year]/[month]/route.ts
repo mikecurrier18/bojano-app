@@ -1,28 +1,9 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { google } from "googleapis";
 
-/**
- * padding the array with an extra value so the array can be 1 based, indexes
- * should be validated prior to accessing this array to ensure index 0 is
- * always unreachable
- */
-const MONTHS = [
-  "UNREACHABLE",
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-];
+import { StatusCode } from "@/lib/http";
 
-type Params = {
+type RouteParams = {
   params: {
     user: string;
     year: string;
@@ -31,120 +12,161 @@ type Params = {
 };
 
 /**
- * Get a user's monthly summary.
- *
- * @param {Request} request
- * @param {Params} params
+ * API endpoint for getting a user's monthly summary.
  */
-export async function GET(request: Request, { params }: Params) {
-  // todo: validate user. how are we identifying users? email? uuid?
-  console.error("user has not been validated (not implemented)");
+export async function GET(_request: NextRequest, { params }: RouteParams) {
+  const user = getUser(params.user);
+  console.error("user validation has not been implemented yet");
 
-  const year = validateYearParam(params.year);
-
-  if (year instanceof NextResponse) {
-    return year;
+  try {
+    var year = validateYearParam(params.year);
+  } catch (error) {
+    if (error instanceof InvalidYearError) {
+      return NextResponse.json(
+        { error: error.message },
+        { status: StatusCode.BAD_REQUEST },
+      );
+    } else {
+      return NextResponse.json(
+        { error: "an error occurred while parsing year" },
+        { status: StatusCode.INTERNAL_SERVER_ERROR },
+      );
+    }
   }
 
-  const month = validateMonthParam(params.month);
-
-  if (month instanceof NextResponse) {
-    return month;
+  try {
+    var month = handleMonthParam(params.month);
+  } catch (error) {
+    if (error instanceof InvalidMonthError) {
+      return NextResponse.json(
+        { error: error.message },
+        { status: StatusCode.BAD_REQUEST },
+      );
+    } else {
+      return NextResponse.json(
+        { error: "an error occurred while parsing year" },
+        { status: StatusCode.INTERNAL_SERVER_ERROR },
+      );
+    }
   }
 
-  // todo: use Google API to search Google Sheets for the user's data
-  const spreadsheetId = "[redacted]";
-  const sheetName = monthNumberToString(month);
-  const data = monthlySummaryData(spreadsheetId, sheetName);
+  const spreadsheetId = getSpreadsheetId(user, year);
+  const sheetName = month;
 
-  if (!data) {
-    return NextResponse.json(
-      { error: "No data found for the provided year" },
-      { status: 404 },
-    );
+  try {
+    var data = await getMonthlySummary(spreadsheetId, sheetName);
+  } catch (error) {
+    if (error instanceof BojanoException) {
+      console.error(error.message);
+      return NextResponse.json(
+        { error: error.message },
+        { status: StatusCode.BAD_REQUEST },
+      );
+    } else {
+      console.error("unknown error has occurred: %s", error);
+      return NextResponse.json(
+        { error: error },
+        { status: StatusCode.INTERNAL_SERVER_ERROR },
+      );
+    }
   }
 
-  return NextResponse.json(data, { status: 200 });
+  return NextResponse.json({ data }, { status: StatusCode.OK });
+}
+
+type User = unknown;
+
+/**
+ * Get information about a user.
+ */
+function getUser(user: string): User {
+  console.warn("not implemented");
+  return user;
 }
 
 /**
- * Convert year into a base 10 number, or return a `400: Bad Request`.
- *
- * @param {string} year
- *
- * @returns {(number|NextResponse)}
+ * Ensure the year provided is 4 digits long, and is not greater than
+ * the current year.
  */
-function validateYearParam(year: string): number | NextResponse {
+function validateYearParam(year: string): string {
   const value = parseInt(year, 10);
 
   if (isNaN(value) || year.length !== 4) {
-    return NextResponse.json(
-      { error: "year should be in 4-digit YYYY format" },
-      { status: 400 },
-    );
+    throw new InvalidYearError("year should be in 4-digit YYYY format");
   }
 
   const currentYear = new Date().getFullYear();
 
   if (value > currentYear) {
-    return NextResponse.json(
-      { error: `year should be less than or equal to ${currentYear}` },
-      { status: 400 },
+    throw new InvalidYearError(
+      `year should be less than or equal to ${currentYear}`,
     );
   }
 
-  return value;
+  return year;
 }
 
 /**
- * Convert month into a base 10 number, or return a `400: Bad Request`.
- *
- * @param {string} month
- *
- * @returns {(number|NextResponse)}
+ * Convert the 2-digit, MM formated month into its full month name.
  */
-function validateMonthParam(month: string): number | NextResponse {
-  const value = parseInt(month, 10);
-
-  if (isNaN(value) || month.length !== 2) {
-    return NextResponse.json(
-      { error: "month should be in 2-digit MM format" },
-      { status: 400 },
-    );
+function handleMonthParam(month: string) {
+  switch (month) {
+    case "01":
+      return "January" as const;
+    case "02":
+      return "February" as const;
+    case "03":
+      return "March" as const;
+    case "04":
+      return "April" as const;
+    case "05":
+      return "May" as const;
+    case "06":
+      return "June" as const;
+    case "07":
+      return "July" as const;
+    case "08":
+      return "August" as const;
+    case "09":
+      return "September" as const;
+    case "10":
+      return "October" as const;
+    case "11":
+      return "November" as const;
+    case "12":
+      return "December" as const;
+    default:
+      throw new InvalidMonthError(
+        "month should be a 2-digit string between 01 and 12 (inclusive)",
+      );
   }
-
-  if (value < 1 || value > 12) {
-    return NextResponse.json(
-      { error: "month should be between 01 and 12 (inclusive)" },
-      { status: 400 },
-    );
-  }
-
-  return value;
 }
 
-function monthNumberToString(month: number): string {
-  if (month < 1 || month > MONTHS.length - 1) {
-    throw new Error("month should be between 1 and 12 (inclusive)");
-  }
-
-  return MONTHS[month];
+function getSpreadsheetId(user: User, year: string) {
+  // TODO: dummy id (for dummies)
+  return "1Ao5xHqq1Y_DlwaitYLgMXR91j1WZDLTS5yx9FqnUWgs";
 }
+
+type Summary = {
+  platform: string;
+  payOutDate: string;
+  checkIn: string;
+  checkOut: string;
+  revenue: string;
+  fee: string;
+  netProfit: string;
+};
 
 /**
- * Call the Google Spreadsheets API to get the summary data for a given month.
- *
- * @param {string} spreadsheetId - The ID of the Spreadsheet you want to read
- * @param {string} sheetName - The page of the spreadsheet to read (e.g. Overviews,
- *                         Profit Summary, January, February, etc.)
+ * Call the Google Sheets API to get the summary data for a given month.
  *
  * @example
- * // https://docs.google.com/spreadsheets/d/<id>/edit
- * const spreadsheetId = "<id>";
+ * // https://docs.google.com/spreadsheets/d/-->id<--/edit
+ * const spreadsheetId = "";
  * const sheetName = "January";
  * const data = monthlySummaryData(spreadsheetId, sheetName);
  */
-async function monthlySummaryData(spreadsheetId: string, sheetName: string) {
+async function getMonthlySummary(spreadsheetId: string, sheetName: string) {
   const auth = new google.auth.GoogleAuth({
     keyFile: "./service-account-key.json",
     scopes: ["https://www.googleapis.com/auth/spreadsheets.readonly"],
@@ -153,10 +175,26 @@ async function monthlySummaryData(spreadsheetId: string, sheetName: string) {
   const sheets = google.sheets({ version: "v4", auth });
 
   const response = await sheets.spreadsheets.values.get({
-    spreadsheetId: spreadsheetId,
-    range: `${sheetName}!J2:K7`, // todo: this should be dynamic... but how?
+    spreadsheetId,
+    range: `${sheetName}!A2:G250`,
+    majorDimension: "ROWS",
   });
 
-  const rows = response.data.values;
-  console.log(rows);
+  var data: Summary[] = [];
+  const rows = response.data.values as string[][];
+
+  for (let i = 0; i < rows.length; ++i) {
+    const row = rows[i];
+    data.push({
+      platform: row[0],
+      payOutDate: row[1],
+      checkIn: row[2],
+      checkOut: row[3],
+      revenue: row[4],
+      fee: row[5],
+      netProfit: row[6],
+    });
+  }
+
+  return data;
 }
