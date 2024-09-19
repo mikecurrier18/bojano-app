@@ -8,6 +8,8 @@
 
 # testing
 /coverage
+/src/app/constants/sample
+/src/app/constants/sample/*
 
 # next.js
 /.next/

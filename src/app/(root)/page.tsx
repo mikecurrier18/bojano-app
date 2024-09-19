@@ -1,3 +1,4 @@
+import DataSummaries from "@/components/shared/DataSummaries";
 import { navLinks } from "@/constants";
 import Image from "next/image";
 import Link from "next/link";
@@ -38,6 +39,7 @@ const Home = async ({ searchParams }: SearchParamProps) => {
               <p className="h2-bold">$1301</p>
             </div>
           </div>
+          <DataSummaries/>
         </div>
       </section>
     </>
