@@ -4,7 +4,7 @@ const MONGODB_URL = (() => {
   const value = process.env.MONGODB_URL;
 
   if (value === undefined) {
-    throw new Error("missing environment variable 'MONGODB_URL'");
+    throw new Error("environment variable 'MONGODB_URL' should be defined");
   }
 
   return value;
