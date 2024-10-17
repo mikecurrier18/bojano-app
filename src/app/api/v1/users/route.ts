@@ -1,95 +1,91 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { createClerkClient } from "@clerk/nextjs/server";
-import assert from "assert";
 import { ZodError, z } from "zod";
 
 import { CLERK_SECRET_KEY } from "@/lib/env";
+import { APIError } from "@/lib/errors";
+import { isClerkError } from "@/lib/errors";
 import { StatusCode } from "@/lib/http";
 
-const clerkClient = createClerkClient({ secretKey: CLERK_SECRET_KEY });
-
-/**
- * Expected format for incoming POST requests when creating new user accounts.
- *
- * The field names match the names used by Clerk in the JS Backend SDK.
- * https://clerk.com/docs/references/backend/user/create-user
- */
-const User = z.object({
-    firstName: z.string(),
-    lastName: z.string().optional(),
-    emailAddress: z.array(z.string()).nonempty(),
-    phoneNumber: z.array(z.string()).optional(),
+const UserSchema = z.object({
+    first_name: z.string(),
+    last_name: z.string().optional(),
+    email_address: z.array(z.string()).nonempty(),
 });
 
-// TODO: `Authorization: Basic <key>`, and set up a way to get an API key
-
 /**
- * An HTTP endpoint for creating new user accounts.
+ * An HTTP endpoint for creating new users.
  *
- * @example <caption>POST /api/v1/users</caption>
- * {
- *   "firstName": "Nic",
- *   "lastName": "Gonzalez",
- *   "emailAddress": ["nicolasdgonzalez@proton.me"]
- * }
+ * @example
+ * // Create a new user
+ * fetch("/api/users", {
+ *   method: "POST",
+ *   headers: { "Content-Type": "application/json" },
+ *   body: JSON.stringify({
+ *     first_name: "Nicolas",
+ *     last_name: "Gonzalez",
+ *     email_address: ["nicolasdgonzalez@proton.me"],
+ *   }),
+ * });
  */
 export async function POST(request: NextRequest) {
-    try {
-        var body = await request.json();
-    } catch (error) {
-        assert(error instanceof SyntaxError, JSON.stringify(error));
-        return NextResponse.json(
-            { errors: ["expected request body to be valid JSON"] },
-            { status: StatusCode.BAD_REQUEST },
-        );
-    }
+    return request
+        .json()
+        .then((body) => UserSchema.parse(body))
+        .then((payload) =>
+            createClerkClient({ secretKey: CLERK_SECRET_KEY })
+                .users.createUser({
+                    firstName: payload.first_name,
+                    lastName: payload.last_name,
+                    emailAddress: payload.email_address,
+                })
+                .then((user) =>
+                    NextResponse.json(
+                        {
+                            id: user.id,
+                            first_name: user.firstName,
+                            last_name: user.lastName,
+                            email_addresses: user.emailAddresses,
+                        },
+                        {
+                            status: StatusCode.CREATED,
+                            headers: {
+                                Location: `${request.nextUrl.pathname}/${user.id}`,
+                            },
+                        },
+                    ),
+                ),
+        )
+        .catch((error) => {
+            const payload: APIError = { errors: [] };
+            let status = StatusCode.INTERNAL_SERVER_ERROR;
 
-    try {
-        var data = User.parse(body);
-    } catch (error) {
-        assert(error instanceof ZodError, JSON.stringify(error));
-        // TODO: Convert Zod error to our typical error format
-        // https://zod.dev/ERROR_HANDLING
-        console.error(JSON.stringify(error));
-        return NextResponse.json(
-            { errors: ["an error occurred while parsing request body"] },
-            { status: StatusCode.BAD_REQUEST },
-        );
-    }
+            if (error instanceof SyntaxError) {
+                payload.errors.push("expected request body to be valid JSON");
+                status = StatusCode.BAD_REQUEST;
+            } else if (isClerkError(error)) {
+                for (let i = 0; i < error.errors.length; ++i) {
+                    const e = error.errors[i];
+                    payload.errors.push(`${e.message} (${e.code})`);
 
-    try {
-        var user = await clerkClient.users.createUser(data);
-    } catch (error) {
-        /**
-         * Because ClerkAPIError is an interface, we can't do much to validate
-         * that the correct object is here. We'll proceed on the assumption
-         * that only `ClerkAPIError`s will be thrown from the try block...
-         * https://clerk.com/docs/references/javascript/types/clerk-api-error
-         */
+                    switch (e.code) {
+                        case "form_identifier_exists":
+                            status = StatusCode.CONFLICT;
+                        default:
+                            console.error(`missing status code: ${e.code}`);
+                            status = StatusCode.INTERNAL_SERVER_ERROR;
+                    }
+                }
+            } else if (error instanceof ZodError) {
+                status = StatusCode.BAD_REQUEST;
+                error.errors.forEach((issue) =>
+                    payload.errors.push(`${issue.message} (${issue.code})`),
+                );
+            } else {
+                payload.errors.push(JSON.stringify(error));
+            }
 
-        // @ts-expect-error
-        assert("code" in error && "message" in error, JSON.stringify(error));
-        const errors = [];
-        let status = StatusCode.BAD_REQUEST;
-
-        switch (error.code) {
-            case "form_identifier_exists":
-                // thrown when the email address provided is already in use
-                status = StatusCode.CONFLICT;
-                errors.push(error.message);
-            default:
-                errors.push(`clerk error: ${error.code}: ${error.message}`);
-        }
-
-        return NextResponse.json({ errors }, { status });
-    }
-
-    return NextResponse.json(
-        { data: user },
-        {
-            status: StatusCode.CREATED,
-            headers: { Location: `${request.nextUrl.basePath}/${user.id}` },
-        },
-    );
+            return NextResponse.json(payload, { status });
+        });
 }
