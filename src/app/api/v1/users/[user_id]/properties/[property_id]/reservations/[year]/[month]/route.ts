@@ -21,6 +21,16 @@ import {
 import { StatusCode } from "@/lib/http";
 import { Spreadsheet } from "@/lib/models";
 
+export interface Reservation {
+    platform: string;
+    payout_date: string;
+    check_in: string;
+    check_out: string;
+    revenue: string;
+    management_fee: string;
+    net_profit: string;
+}
+
 interface Params {
     params: {
         user_id: string;
@@ -74,15 +84,27 @@ export async function GET(_request: NextRequest, { params }: Params) {
 
             const rows = response.data.values ?? [];
             rows.shift(); // ignore table headings
-            return rows.map((entry) => ({
-                platform: entry[0],
-                payout_date: new Date(entry[1]).toISOString(),
-                check_in: new Date(entry[2]).toISOString(),
-                check_out: new Date(entry[3]).toISOString(),
-                revenue: entry[4],
-                management_fee: entry[5],
-                net_profit: entry[6],
-            }));
+            console.debug(`rows: ${rows}`);
+
+            const payload: Reservation[] = [];
+
+            rows.forEach((entry) => {
+                if (entry[0] !== "") {
+                    return;
+                }
+
+                payload.push({
+                    platform: entry[0],
+                    payout_date: new Date(entry[1]).toISOString(),
+                    check_in: new Date(entry[2]).toISOString(),
+                    check_out: new Date(entry[3]).toISOString(),
+                    revenue: entry[4],
+                    management_fee: entry[5],
+                    net_profit: entry[6],
+                });
+            });
+
+            return payload;
         })
         .then((data) => NextResponse.json(data))
         .catch((error) => getErrorResponse(error));
@@ -109,7 +131,10 @@ function getErrorResponse(error: any): NextResponse {
     } else if (error instanceof SpreadsheetAccessError) {
         status = StatusCode.UNAUTHORIZED;
         payload.errors.push(error.message);
+    } else if (typeof error === "string") {
+        payload.errors.push(error);
     } else {
+        console.error(error);
         payload.errors.push(JSON.stringify(error));
     }
 

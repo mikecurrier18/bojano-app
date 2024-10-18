@@ -7,4 +7,6 @@ import { NextRequest } from "next/server";
  * // Create a new reservation
  * fetch();
  */
-export async function POST(request: NextRequest) {}
+export async function POST(request: NextRequest) {
+    // ...
+}
