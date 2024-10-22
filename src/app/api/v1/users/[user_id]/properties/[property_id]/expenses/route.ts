@@ -47,4 +47,8 @@ export async function POST(_request: NextRequest) {}
 //
 // You can filter using query parameters
 
-export async function GET(_request: NextRequest) {}
+export async function GET(_request: NextRequest) {
+    // Get ID from endpoint or database call
+    // Get rows from expense sheet
+    // Filter rows by property name
+}

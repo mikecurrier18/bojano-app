@@ -51,6 +51,16 @@ export class PropertyNotFoundError extends Error {
 /**
  *
  */
+export class ExpenseSheetNotFoundError extends Error {
+    constructor(year: string) {
+        super(`expense sheet not found for year ${year}`);
+        this.name = "ExpenseSheetNotFoundError";
+    }
+}
+
+/**
+ *
+ */
 export class SpreadsheetNotFoundError extends Error {
     constructor(propertyId: string) {
         super(`spreadsheet not found for property with id ${propertyId}`);
