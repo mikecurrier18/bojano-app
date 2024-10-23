@@ -5,8 +5,9 @@ import data from '@/constants/sample/data.json'
 import { convertStringToDate, convertStringToNumber } from '@/lib/utils'
 import { useState } from 'react'
 
-const setData = (data: any) => {
-    data.data.forEach((trip: any) => {
+
+const setData = (data1: any) => {
+    data1.data.forEach((trip: any) => {
         trip.payOutDate = convertStringToDate(trip.payOutDate)
         trip.checkIn = convertStringToDate(trip.checkIn)
         trip.checkOut = convertStringToDate(trip.checkOut)
