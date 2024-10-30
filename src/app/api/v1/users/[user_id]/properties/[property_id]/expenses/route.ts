@@ -29,7 +29,9 @@ const ExpenseSchema = z.object({
  *   }),
  * });
  */
-export async function POST(_request: NextRequest) {}
+export async function POST(_request: NextRequest) {
+    /* POST requests are not a priority until we create the Admin panel */
+}
 
 // TODO: Return an object like:
 // [
