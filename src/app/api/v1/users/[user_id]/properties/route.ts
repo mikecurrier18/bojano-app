@@ -27,7 +27,7 @@ const PropertySchema = z.object({
  *
  * @example
  * // Create a new property
- * fetch("/api/users/[user_id]/properties", {
+ * fetch(`/api/users/${userId}/properties`, {
  *   method: "POST",
  *   headers: { "Content-Type": "application/json" },
  *   body: JSON.stringify({
@@ -87,6 +87,15 @@ export async function POST(request: NextRequest, { params }: Params) {
         });
 }
 
+/**
+ * An HTTP endpoint for getting all of a user's properties.
+ *
+ * @example
+ * // Returns a list of all the user's properties
+ * fetch(`/api/v1/users/${userId}/properties`)
+ *     .then((payload) => console.log(payload))
+ *     .catch((error) => console.error(error))
+ */
 export async function GET(_request: NextRequest, { params }: Params) {
     await connectToDatabase();
 
