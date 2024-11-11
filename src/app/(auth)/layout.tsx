@@ -1,11 +1,8 @@
-import React from 'react'
+import { PropsWithChildren } from "react";
 
-const Layout = ({children}: {children: React.ReactNode}) => {
-  return (
-    <main className='auth'>
-        {children}
-    </main>
-  )
+/**
+ * A component that wraps the content of all authentication-related routes.
+ */
+export default function Layout({ children }: PropsWithChildren) {
+    return <main className="auth">{children}</main>;
 }
-
-export default Layout
