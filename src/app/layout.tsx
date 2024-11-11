@@ -1,34 +1,46 @@
-import type { Metadata } from "next";
 import { IBM_Plex_Sans } from "next/font/google";
-import "./globals.css";
-import {cn} from "@/lib/utils";
+
 import { ClerkProvider } from "@clerk/nextjs";
-import Top from "@/components/shared/Top";
-const IBMPlex = IBM_Plex_Sans({ subsets: ["latin"],
-weight: ['400', '500', '600', '700',],
-variable: '--font-ibm-plex' 
+import type { Metadata } from "next";
+
+import Top from "@components/shared/Top";
+import { cn } from "@lib/utils";
+
+import "./globals.css";
+
+const IBMPlex = IBM_Plex_Sans({
+    subsets: ["latin"],
+    weight: ["400", "500", "600", "700"],
+    variable: "--font-ibm-plex",
 });
 
 export const metadata: Metadata = {
-  title: "Bojano Homes Owner Portal",
-  description: "Bojano Homes Owner Portal",
+    title: "Dashboard | Bojano Homes",
+    description: "View detailed information about your properties.",
 };
 
+/**
+ * A component that wraps the content of every route.
+ */
 export default function RootLayout({
-  children,
+    children,
 }: Readonly<{
-  children: React.ReactNode;
+    children: React.ReactNode;
 }>) {
-  return (
-    <ClerkProvider>
-    <html lang="en">
-      <body className={cn("font-IBMPlex antialiased", IBMPlex.variable)}>
+    return (
+        <ClerkProvider>
+            <html lang="en">
+                <body
+                    className={cn(
+                        "font-IBMPlex antialiased",
+                        IBMPlex.variable,
+                    )}
+                >
+                    <Top />
 
-        <Top/>
-        
-        {children}
-        </body>
-    </html>
-    </ClerkProvider>
-  );
+                    {children}
+                </body>
+            </html>
+        </ClerkProvider>
+    );
 }
