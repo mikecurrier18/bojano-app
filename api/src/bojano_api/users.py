@@ -6,15 +6,13 @@ from .errors import InvalidClerkAPIKeyError, UserNotFoundError
 
 
 class User(BaseModel):
-    """Represents a user in our database"""
-
     id: str
     first_name: str
     last_name: str
     email_addresses: list[str]
 
 
-def get_user_by_id(user_id: str) -> User:
+async def get_user_by_id(user_id: str) -> User:
     """Get information about a user from their ID.
 
     Parameters
@@ -43,7 +41,9 @@ def get_user_by_id(user_id: str) -> User:
     # You can find the potential response status codes for Clerk here:
     # https://clerk.com/docs/reference/backend-api/tag/Users#operation/GetUser
 
-    if response.status_code == 401:
+    if response.status_code == 200:
+        pass
+    elif response.status_code == 401:
         assert "Authorization" in headers.keys(), headers.keys()
         raise InvalidClerkAPIKeyError()
     elif response.status_code == 400:
@@ -52,7 +52,7 @@ def get_user_by_id(user_id: str) -> User:
     elif response.status_code == 404:
         raise UserNotFoundError(user_id)
     else:
-        assert False, "unreachable (unless clerk updates their endpoint)"
+        assert False, f"unreachable ({response.status_code})"
 
     data: dict[str, object] = response.json()
 
@@ -70,9 +70,9 @@ def get_user_by_id(user_id: str) -> User:
     email_addresses_clerk: dict[str, object] = data["email_addresses"]
     assert len(email_addresses_clerk) > 0, len(email_addresses_clerk)
     # Clerk provides way more information about each email address
-    # than we need, so here we are stripping out all unnecessary information.
+    # than we need, so here we are stripping out all extraneous information.
     # fmt: off
-    assert "email_address" in email_addresses_clerk.keys(), email_addresses_clerk.keys()  # noqa: E501
+    assert "email_address" in email_addresses_clerk[0].keys(), email_addresses_clerk[0].keys()  # noqa: E501
     email_addresses: list[str] = [e["email_address"] for e in email_addresses_clerk]  # noqa: E501
     # fmt: on
 
