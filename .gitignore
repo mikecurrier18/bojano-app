@@ -27,21 +27,25 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# local env files
-.env*
-!.env*.example
-service-account-key.json
-
-# vercel
-.vercel
-
-# typescript
+# TypeScript
 *.tsbuildinfo
 next-env.d.ts
 
-# data
-data/*
-*.csv
+# Environment variables
+.env
+.env.local
+.env.local.production
+.env.local.development
+
+# JavaScript
+node_modules
+.next
 
 # Python
-**/__pycache__/**
+__pycache__
+*.egg-info
+.venv
+
+# Miscellaneous
+.vercel
+./data
