@@ -7,7 +7,7 @@
     "scripts": {
         "build": "next build",
         "dev": "concurrently 'pnpm dev:frontend' 'pnpm dev:backend'",
-        "dev:backend": "pip3 install -r requirements.txt && fastapi dev --host 0.0.0.0 --port 1140 ./api/app.py",
+        "dev:backend": "pip3 install -r requirements.txt && python3 ./api/app.py",
         "dev:frontend": "next dev --turbo --hostname 0.0.0.0",
         "format": "pnpx prettier --write -- \"**/*.{js,jsx,mjs,cjs,ts,tsx,json,css,md}\" && pnpx sort-package-json",
         "lint": "next lint",

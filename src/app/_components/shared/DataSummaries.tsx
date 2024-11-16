@@ -2,6 +2,7 @@
 
 import React from "react";
 
+/**
 // TODO: Swap this out for a backend API call.
 import data from "@/constants/sample/data.json";
 
@@ -19,11 +20,12 @@ const setData = (data1: any) => {
     console.log(data);
     return data;
 };
+*/
 
 export default function DataSummaries() {
     return (
         <div>
-            <button onClick={() => setData(data)}>Click me</button>
+            <button onClick={() => /* setData(data) */ console.log("Setting data...")}>Click me</button>
         </div>
     );
 }

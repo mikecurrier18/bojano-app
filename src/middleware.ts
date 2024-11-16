@@ -24,7 +24,7 @@ async function handler(auth: ClerkMiddlewareAuth, request: NextRequest) {
     }
 }
 
-export default clerkMiddleware(handler, { debug: true });
+export default clerkMiddleware(handler, { debug: false });
 
 export const config = {
     matcher: [

@@ -3,7 +3,7 @@ import json
 from google.oauth2.service_account import Credentials
 from googleapiclient.discovery import build
 
-from constants import SERVICE_ACCOUNT_KEY
+from .config import SERVICE_ACCOUNT_KEY
 
 
 def get_google_sheets_service() -> object:
@@ -14,7 +14,7 @@ def get_google_sheets_service() -> object:
         The library Google provides for Google Sheets does not provide type
         information, nor does Google provide very easy-to-understand
         documentation... luckily, our use case is rather simple, but if you
-        want to try reading the documentation then you can find it here:
+        want to try reading the documentation, you can find it here:
         https://developers.google.com/resources/api-libraries/documentation/sheets/v4/python/latest/index%2Ehtml
 
     Returns
