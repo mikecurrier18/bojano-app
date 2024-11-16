@@ -2,7 +2,7 @@ import logging
 import os
 import pathlib
 
-from .errors import MissingEnvironmentVariableError
+from .exceptions import MissingEnvironmentVariableError
 
 _log = logging.getLogger(__name__)
 
