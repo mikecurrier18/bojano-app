@@ -1,7 +1,7 @@
-from .. import exceptions as base_exceptions
+from bojano.exceptions import BojanoException
 
 
-class UserNotFoundError(base_exceptions.BojanoException):
+class UserNotFoundError(BojanoException):
     """The user ID provided does not match an existing user"""
 
     def __init__(self, user_id: str, *args: object) -> None:

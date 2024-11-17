@@ -1,10 +1,11 @@
 import logging
+from typing import Annotated
 
 import fastapi
+from fastapi import Depends
 
-from .exceptions import UserNotFoundError
-from .models import UserCreate
-from .service import get_user_by_id
+from .dependencies import get_user as get_user_by_id
+from .models import User, UserCreate
 
 router = fastapi.APIRouter(prefix="/users")
 log = logging.getLogger(__name__)
@@ -16,13 +17,7 @@ async def create_user(payload: UserCreate) -> fastapi.Response:
 
 
 @router.get("/{user_id}")
-async def get_user(user_id: str) -> fastapi.Response:
-    try:
-        user = await get_user_by_id(user_id)
-    except UserNotFoundError as exc:
-        raise fastapi.HTTPException(
-            status_code=fastapi.status.HTTP_404_NOT_FOUND,
-            detail=str(exc),
-        )
-
+async def get_user(
+    user: Annotated[User, Depends(get_user_by_id)],
+) -> fastapi.Response:
     return fastapi.encoders.jsonable_encoder(user)
