@@ -1,26 +1,14 @@
 from typing import Annotated
 
 import fastapi
-from bojano.users.models import User
+from bojano.expense_sheets.exceptions import ExpenseSheetNotFoundError
+from bojano.users.properties.dependencies import get_property
 from bojano.users.properties.models import Property
-from bojano.users.properties.service import get_property_by_id
-from bojano.users.service import get_user_by_id
 from fastapi import Depends
 
-from .service import get_expenses_by_year
+from .service import get_expenses_by_month, get_expenses_by_year
 
 router = fastapi.APIRouter(prefix="/{property_id}/expenses")
-
-
-async def get_user(user_id: str) -> User:
-    return await get_user_by_id(user_id)
-
-
-async def get_property(
-    user: Annotated[User, Depends(get_user)],
-    property_id: str,
-) -> Property:
-    return await get_property_by_id(user, property_id)
 
 
 @router.get("/{year}")
@@ -28,14 +16,29 @@ async def get_annual_expenses(
     year: int,
     property: Annotated[Property, Depends(get_property)],
 ) -> fastapi.Response:
-    expenses = await get_expenses_by_year(property, year)
-    return fastapi.encoders.jsonable_encoder(expenses)
+    try:
+        expenses_annual = await get_expenses_by_year(property, year)
+    except ExpenseSheetNotFoundError as exc:
+        raise fastapi.HTTPException(
+            status_code=fastapi.status.HTTP_404_NOT_FOUND,
+            detail=str(exc),
+        )
+
+    return fastapi.encoders.jsonable_encoder(expenses_annual)
 
 
 @router.get("/{year}/{month}")
 async def get_monthly_expenses(
     year: int,
     month: int,
-    property: Annotated[Property, Depends(get_property_by_id)],
+    property: Annotated[Property, Depends(get_property)],
 ) -> fastapi.Response:
-    return "{}"
+    try:
+        expenses_month = await get_expenses_by_month(property, year, month)
+    except ExpenseSheetNotFoundError as exc:
+        raise fastapi.HTTPException(
+            status_code=fastapi.status.HTTP_404_NOT_FOUND,
+            detail=str(exc),
+        )
+
+    return fastapi.encoders.jsonable_encoder(expenses_month)

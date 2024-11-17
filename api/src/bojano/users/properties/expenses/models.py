@@ -5,6 +5,7 @@ import pydantic
 
 class Expense(pydantic.BaseModel):
     # id: int  # TODO: This is for when the expenses are moved into a database.
+    property_id: str
     amount: float
     description: str
     timestamp: dt.datetime
