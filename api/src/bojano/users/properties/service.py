@@ -1,7 +1,8 @@
 import logging
 
-from ...database import db
-from .. import service as user_service
+from bojano.database import db
+from bojano.users import service as user_service
+
 from .exceptions import PropertyNotFoundError
 from .models import Property
 

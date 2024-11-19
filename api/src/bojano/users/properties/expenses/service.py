@@ -4,6 +4,7 @@ import logging
 from bojano.expense_sheets.service import get_expense_sheet_id_by_year
 from bojano.sheets import get_google_sheets_service
 from bojano.users.properties.models import Property
+from bojano.utils import normalize_price
 
 from .models import Expense
 
@@ -32,13 +33,12 @@ async def get_expenses_by_year(property: Property, year: int) -> list[Expense]:
         .execute()
     )
     values = response.get("values", [])
-    column_names = values.pop(0)  # we don't need the table headings
-    assert len(column_names) == 8, len(column_names)
+    _ = values.pop(0)  # table headings
 
     # Table Headings:
     # [0]: Timestamp
-    # [1]: ~~Date~~ (Timestamp displays same information)
-    # [2]: ~~Property~~ (We already know the property's name)
+    # [1]: Date
+    # [2]: Property
     # [3]: Amount
     # [4]: Description
     # [5]: Receipt [Link]
@@ -47,22 +47,22 @@ async def get_expenses_by_year(property: Property, year: int) -> list[Expense]:
     entries = filter(lambda e: e[2].lower() == property.name.lower(), values)
     expenses: list[Expense] = []
 
-    for e in entries:
+    for entry in entries:
         for fmt in DATETIME_FORMATS:
             try:
-                timestamp = dt.datetime.strptime(e[0], fmt)
+                timestamp = dt.datetime.strptime(entry[0], fmt)
             except ValueError:
                 continue
             else:
                 break
         else:
-            raise RuntimeError(f"Failed to parse timestamp: {e[0]}")
+            raise RuntimeError(f"Failed to parse timestamp: {entry[0]}")
 
-        amount = float(e[3].replace("$", ""))
-        description = e[4]
-        receipt_link = e[5]
-        merchant = e[6]
-        buyers_name = e[7]
+        amount = float(normalize_price(entry[3]))
+        description = entry[4]
+        receipt_link = entry[5]
+        merchant = entry[6]
+        buyers_name = entry[7]
 
         expense = Expense(
             property_id=property.id,
