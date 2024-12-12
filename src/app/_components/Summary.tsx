@@ -22,6 +22,12 @@ export function Summary() {
   // This component can also be moved to "/app/(root)/summary/Summary.tsx".
   // We are using the app router; only the page.tsx file turns into a route.
   // Colocation for the win!
+  //
+  // We need to add some sort of way to sort the properties if they are going to become
+  // pages, since /0/reservations needs to always be the same. I think sorting by
+  // property entry creation makes the most sense.
+  //
+  // If the user has no properties, render a fallback page with general layout but no data.
   useEffect(() => {
     const baseUrl = process.env.NODE_ENV === "development"
       ? "http://0.0.0.0:1140"
@@ -31,7 +37,7 @@ export function Summary() {
     const currentYear = today.getFullYear();
     const currentMonth = today.getMonth();
     assert(user !== null);
-    // deno-fmt-ignore
+    // prettier-ignore
     const url = `${baseUrl}/api/v1/${user!.id}/properties/${property.id}/reservations/${currentYear}/${currentMonth}`;
     const reservations = fetch(url)
       .then((body) => body.json())
