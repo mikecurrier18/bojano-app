@@ -9,7 +9,15 @@ export function Summary() {
   const { user } = useClerk();
   const { property } = useProperty();
 
-  // TODO: Move this to the server and pass the data into Summary.
+  // ~~TODO: Move this to the server and pass the data into Summary.~~
+  // This can't be done because we need useContext (useProperty) to know
+  // which property to get data for... alternatively, instead of having
+  // the property selector change the data on the page, we could render
+  // each property as a separate page, and have the toggle just redirect
+  // to "/1", "/2", "/3", etc. instead.
+  //
+  // Taking the TODO cancellation back... it *can* be rendered server-side after all.
+  // ... (hopefully)
   useEffect(() => {
     const baseUrl = process.env.NODE_ENV === "development"
       ? "http://0.0.0.0:1140"
