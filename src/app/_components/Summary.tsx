@@ -16,8 +16,12 @@ export function Summary() {
   // each property as a separate page, and have the toggle just redirect
   // to "/1", "/2", "/3", etc. instead.
   //
-  // Taking the TODO cancellation back... it *can* be rendered server-side after all.
+  // Taking the TODO cancellation back... it *can* be rendered server-side after all
   // ... (hopefully)
+  //
+  // This component can also be moved to "/app/(root)/summary/Summary.tsx".
+  // We are using the app router; only the page.tsx file turns into a route.
+  // Colocation for the win!
   useEffect(() => {
     const baseUrl = process.env.NODE_ENV === "development"
       ? "http://0.0.0.0:1140"
