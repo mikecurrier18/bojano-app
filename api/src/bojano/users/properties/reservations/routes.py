@@ -6,8 +6,8 @@ from bojano.users.properties.models import Property
 from fastapi import Depends, Response
 
 from .dependencies import get_full_month_name_from_mm
-from .service import get_reservations_for_month
 from .models import Reservation
+from .service import get_reservations_for_month
 
 router = fastapi.APIRouter(prefix="/{property_id}/reservations")
 

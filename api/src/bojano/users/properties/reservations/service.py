@@ -4,8 +4,8 @@ from typing import Literal
 from bojano.database import db
 from bojano.sheets import get_google_sheets_service
 from bojano.users.properties.models import Property
-from bson.objectid import ObjectId
 from bojano.utils import normalize_price
+from bson.objectid import ObjectId
 
 from .exceptions import InvalidMonthError
 from .models import Reservation

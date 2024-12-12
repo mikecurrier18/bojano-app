@@ -1,14 +1,14 @@
 # Dashboard
 
-**Dashboard** allows Bojano Homes' clients access to detailed information
-about their properties in the form of a web dashboard.
+**Dashboard** allows Bojano Homes' clients access to detailed information about
+their properties in the form of a web dashboard.
 
 This repository contains all of the code for the application, which utilizes:
 
--   [Next.js], a JavaScript framework for creating full-stack web applications.
--   [TailwindCSS], for styling JSX components.
--   [Clerk], for user authentication and management.
--   [MongoDB], for storing user/property data.
+- [Next.js], a JavaScript framework for creating full-stack web applications.
+- [TailwindCSS], for styling JSX components.
+- [Clerk], for user authentication and management.
+- [MongoDB], for storing user/property data.
 
 Click [here](https://bojano-app.vercel.app/) for a LIVE demonstration.
 

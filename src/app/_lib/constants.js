@@ -7,29 +7,29 @@
 
 /** @type {NavLink[]} */
 export const navLinks = [
-    {
-        label: "Summary",
-        path: "/",
-        icon: "/assets/icons/summary-icon.svg",
-    },
-    {
-        label: "Statements",
-        path: "/",
-        icon: "/assets/icons/statements-icon.svg",
-    },
-    {
-        label: "Performance",
-        path: "/",
-        icon: "/assets/icons/performance-icon.svg",
-    },
-    {
-        label: "Calendar",
-        path: "/",
-        icon: "/assets/icons/calendar-icon.svg",
-    },
-    {
-        label: "Maintenance",
-        path: "/",
-        icon: "/assets/icons/maintenance-icon.svg",
-    },
+  {
+    label: "Summary",
+    path: "/",
+    icon: "/assets/icons/summary-icon.svg",
+  },
+  {
+    label: "Statements",
+    path: "/",
+    icon: "/assets/icons/statements-icon.svg",
+  },
+  {
+    label: "Performance",
+    path: "/",
+    icon: "/assets/icons/performance-icon.svg",
+  },
+  {
+    label: "Calendar",
+    path: "/",
+    icon: "/assets/icons/calendar-icon.svg",
+  },
+  {
+    label: "Maintenance",
+    path: "/",
+    icon: "/assets/icons/maintenance-icon.svg",
+  },
 ];

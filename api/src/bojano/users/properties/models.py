@@ -6,5 +6,6 @@ class PropertyCreate(pydantic.BaseModel):
     name: str
 
 
-class Property(PropertyCreate):
+class Property(pydantic.BaseModel):
     id: str
+    name: str

@@ -1,42 +1,42 @@
 {
-    "$schema": "http://json.schemastore.org/tsconfig",
-    "compilerOptions": {
-        "lib": ["DOM", "DOM.Iterable", "ESNext"],
-        "allowJs": true,
-        "checkJs": true,
-        "skipLibCheck": true,
-        "strict": true,
-        "noEmit": true,
-        "esModuleInterop": true,
-        "module": "ESNext",
-        "moduleResolution": "Bundler",
-        "resolveJsonModule": true,
-        "isolatedModules": true,
-        "jsx": "preserve",
-        "incremental": true,
-        "baseUrl": "src",
-        "paths": {
-            "@/*": ["./*"],
-            "@app/*": ["app/*"],
-            "@components/*": ["app/_components/*"],
-            "@shared/*": ["app/_components/shared/*"],
-            "@lib/*": ["app/_lib/*"],
-            "@hooks/*": ["app/_hooks/*"]
-        },
-        "plugins": [
-            {
-                "name": "next"
-            }
-        ],
-        "target": "ES2017"
+  "$schema": "http://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "allowJs": true,
+    "checkJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "baseUrl": "src",
+    "paths": {
+      "@/*": ["./*"],
+      "@app/*": ["app/*"],
+      "@components/*": ["app/_components/*"],
+      "@shared/*": ["app/_components/shared/*"],
+      "@lib/*": ["app/_lib/*"],
+      "@hooks/*": ["app/_hooks/*"]
     },
-    "include": [
-        "next-env.d.ts",
-        ".next/types/**/*.ts",
-        "**/*.ts",
-        "**/*.tsx",
-        "**/*.js",
-        "**/*.jsx"
+    "plugins": [
+      {
+        "name": "next"
+      }
     ],
-    "exclude": ["node_modules"]
+    "target": "ES2017"
+  },
+  "include": [
+    "next-env.d.ts",
+    ".next/types/**/*.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.js",
+    "**/*.jsx"
+  ],
+  "exclude": ["node_modules"]
 }

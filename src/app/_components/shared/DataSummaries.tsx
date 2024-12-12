@@ -23,9 +23,13 @@ const setData = (data1: any) => {
 */
 
 export default function DataSummaries() {
-    return (
-        <div>
-            <button onClick={() => /* setData(data) */ console.log("Setting data...")}>Click me</button>
-        </div>
-    );
+  return (
+    <div>
+      <button
+        onClick={() => /* setData(data) */ console.log("Setting data...")}
+      >
+        Click me
+      </button>
+    </div>
+  );
 }

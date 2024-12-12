@@ -22,12 +22,18 @@ async def property_post(
 
 @router.get("/")
 async def properties_get(user: Annotated[User, Depends(get_user)]) -> Response:
-    properties = await get_properties_by_user(user)
-    return properties
+    try:
+        properties = await get_properties_by_user(user)
+    except Exception as exc:
+        raise fastapi.HTTPException(
+            status_code=fastapi.status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=str(exc),
+        )
+    return fastapi.encoders.jsonable_encoder(properties)
 
 
 @router.get("/{property_id}")
 async def property_get(
     property: Annotated[Property, Depends(get_property)],
 ) -> Response:
-    return property
+    return fastapi.encoders.jsonable_encoder(property)

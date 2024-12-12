@@ -1,102 +1,126 @@
-"use client";
-
-import React from "react";
-
+import { auth } from "@clerk/nextjs/server";
+import { headers } from "next/headers";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 
-import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import {
+  type Property,
+  PropertySelector,
+} from "@components/shared/PropertySelector";
 
-import { Button } from "@components/ui/Button";
-import { navLinks } from "@lib/constants";
+/**
+ * Get a list of the current user's existing properties.
+ *
+ * @param userId The user's unique identifier.
+ */
+async function getProperties(userId: string): Promise<Property[]> {
+  const baseURL = process.env.NODE_ENV === "development"
+    ? "http://0.0.0.0:1140"
+    : "https://bojano-app.vercel.app";
+  const response = await fetch(`${baseURL}/api/v1/users/${userId}/properties`);
+  const properties = await response.json();
+  return properties;
+}
 
-export default function Sidebar() {
-    const pathname = usePathname();
-    return (
-        <aside className="sidebar">
-            <div className="flex size-full flex-col gap-4">
-                <Link href="/" className="sidebar-logo">
-                    <Image
-                        src="/assets/images/logo-white.png"
-                        alt="logo"
-                        width={100}
-                        height={28}
-                    />
+/**
+ * Displays which property to show information for, and the site navigation
+ * as a menu on the side of the page.
+ */
+export default async function Sidebar() {
+  const { userId } = await auth();
+  // Users can only access this page after they have signed in.
+  const properties = await getProperties(userId!);
+
+  return (
+    <aside className="flex flex-col h-screen w-72 shadow-md gap-y-4 shadow-purple-200/50">
+      <PropertySelector properties={properties} />
+      <Pages />
+    </aside>
+  );
+}
+
+/**
+ * @property label The text or name to display for the link.
+ * @property path The destination URL or route for the link.
+ * @property icon The path to an image or SVG icon.
+ */
+type NavLink = {
+  label: string;
+  href: string;
+  icon: string;
+};
+
+// The navigation links are being exported so the page at '/' can redirect
+// to the first page in this list.
+export const navigationLinks: NavLink[] = [
+  {
+    label: "Summary",
+    href: "/summary",
+    icon: "/assets/icons/summary-icon.svg",
+  },
+  {
+    label: "Statements",
+    href: "/statements",
+    icon: "/assets/icons/statements-icon.svg",
+  },
+  {
+    label: "Performance",
+    href: "/performance",
+    icon: "/assets/icons/performance-icon.svg",
+  },
+  {
+    label: "Calendar",
+    href: "/calendar",
+    icon: "/assets/icons/calendar-icon.svg",
+  },
+  {
+    label: "Maintenance",
+    href: "/maintenance",
+    icon: "/assets/icons/maintenance-icon.svg",
+  },
+];
+
+function Pages() {
+  const pathname = headers().get("X-Current-Path");
+
+  return (
+    <div>
+      <nav className="flex flex-col justify-between">
+        <ul className="flex flex-col">
+          {navigationLinks.map((link, index) => {
+            const isCurrentPage = link.href === pathname;
+
+            return (
+              // Using indices as keys are okay if the elements in the list
+              // are not going to change.
+              <li
+                key={index}
+                className={`flex-center w-full whitespace-nowrap
+                    bg-cover transition-all hover:bg-purple-50 hover:text-black
+                    ${
+                  isCurrentPage
+                    ? "text-[#493857] bg-purple-50 shadow-inner"
+                    : "text-black"
+                }`}
+              >
+                <Link
+                  href={link.href}
+                  className="flex size-full gap-x-4 p-4 text-lg"
+                >
+                  <Image
+                    src={link.icon}
+                    alt={`${link.label.toLowerCase()}-icon`}
+                    width={24}
+                    height={24}
+                    className={`${isCurrentPage && "brightness-200"}`}
+                  />
+                  {link.label}
                 </Link>
-
-                <nav className="sidebar-nav">
-                    <SignedIn>
-                        <ul className="sidebar-nav_elements">
-                            {navLinks.slice(0, 6).map((link) => {
-                                const isActive = link.path == pathname;
-                                return (
-                                    <li
-                                        key={link.path}
-                                        className={`sidebar-nav_element group ${
-                                            isActive
-                                                ? "text-[#493857]"
-                                                : "text-[#493857]"
-                                        }`}
-                                    >
-                                        <Link
-                                            className="sidebar-link"
-                                            href={link.path}
-                                        >
-                                            <Image
-                                                src={link.icon}
-                                                alt="logo"
-                                                width={24}
-                                                height={24}
-                                                className={`${isActive && "brightness-200"}`}
-                                            ></Image>
-                                            {link.label}
-                                        </Link>
-                                    </li>
-                                );
-                            })}
-                        </ul>
-
-                        <ul className="sidebar-nav_elements">
-                            {navLinks.slice(6).map((link) => {
-                                const isActive = link.path == pathname;
-                                return (
-                                    <li
-                                        key={link.path}
-                                        className={`sidebar-nav_element group ${
-                                            isActive
-                                                ? "text-white"
-                                                : "text-[#493857]"
-                                        }`}
-                                    >
-                                        <Link
-                                            className="sidebar-link"
-                                            href={link.path}
-                                        >
-                                            <Image
-                                                src={link.icon}
-                                                alt="logo"
-                                                width={24}
-                                                height={24}
-                                                className={`${isActive && "brightness-200"}`}
-                                            ></Image>
-                                            {link.label}
-                                        </Link>
-                                    </li>
-                                );
-                            })}
-                            <li className="flex-center cursor-pointer gap-2 p-4 text-white">
-                                <UserButton showName />
-                            </li>
-                        </ul>
-                    </SignedIn>
-                    <SignedOut>
-                        <Button asChild className="button bg-cover">
-                            <Link href="/sign-in">Log in</Link>
-                        </Button>
-                    </SignedOut>
-                </nav>
-            </div>
-        </aside>
-    );
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
+    </div>
+  );
 }
