@@ -32,26 +32,24 @@ export function PropertySelector({ properties }: { properties: Property[] }) {
         id="property-select"
         onChange={(event) => {
           const nextProperty = event.target?.value;
-          const match = properties.findIndex(
+          const index = properties.findIndex(
             (p) => p.name === nextProperty,
           );
 
-          if (match === -1) {
+          if (index === -1) {
             console.error(
               "failed to change which property is being displayed",
             );
             return;
           }
 
-          // Skipping the `/properties/\d+` part and attaching the remainder
-          // to the end of the new URL.
-          parts.shift();
-          parts.shift();
-          parts.shift();
+          parts.shift(); // ""
+          parts.shift(); // "properties"
+          parts.shift(); // index
           const remainder = parts.join("/");
 
           // Redirect to the new page.
-          return router.push(`/properties/${match}/${remainder}`);
+          return router.push(`/properties/${index}/${remainder}`);
         }}
       >
         {properties.map((p) => (
