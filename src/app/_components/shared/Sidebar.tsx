@@ -3,27 +3,10 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { auth } from "@clerk/nextjs/server";
+import assert from "assert";
 
-import {
-  type Property,
-  PropertySelector,
-} from "@components/shared/PropertySelector";
-
-/**
- * Get a list of the current user's existing properties.
- *
- * @param userId The user's unique identifier.
- */
-async function getProperties(userId: string): Promise<Property[]> {
-  const baseURL = process.env.NODE_ENV === "development"
-    ? "http://0.0.0.0:1140"
-    : "https://bojano-app.vercel.app";
-  const response = await fetch(
-    `${baseURL}/api/v1/users/${userId}/properties`,
-  );
-  const properties = await response.json();
-  return properties;
-}
+import { PropertySelector } from "@components/shared/PropertySelector";
+import { getProperties } from "@lib/properties";
 
 /**
  * Displays which property to show information for, and the site navigation
@@ -91,7 +74,15 @@ function Pages() {
       <nav className="flex flex-col justify-between">
         <ul className="flex flex-col">
           {navigationLinks.map((link, index) => {
-            const isCurrentPage = link.href === pathname;
+            const href = (() => {
+              assert(pathname !== null);
+              const parts = pathname!.split("/");
+              const url = `/${parts.at(1)}/${parts.at(2)}${link.href}`;
+              assert(/^\/properties\/\d+\/[\w\-]+/.test(url));
+              return url;
+            })();
+
+            const isCurrentPage = href === pathname;
 
             return (
               // Using indices as keys are okay if the elements in the list
@@ -105,7 +96,7 @@ function Pages() {
                 }`}
               >
                 <Link
-                  href={link.href}
+                  href={href}
                   className="flex size-full gap-x-4 p-4 text-lg"
                 >
                   <Image

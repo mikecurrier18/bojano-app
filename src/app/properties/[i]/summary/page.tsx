@@ -3,19 +3,18 @@ import { notFound } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
 import assert from "assert";
 
-import { getProperties } from "@lib/properties";
+import { getProperties, getPropertyReservations } from "@lib/properties";
 
 interface PageProps {
-  params: Promise<{ propertyIndex: number }>;
+  params: Promise<{ i: string }>;
 }
 
 export default async function Page({ params }: PageProps) {
-  const { propertyIndex } = await params;
-  assert(typeof propertyIndex === "string");
-  const index = parseInt(propertyIndex, 10);
+  const { i } = await params;
+  const index = parseInt(i, 10);
 
   const { userId } = await auth();
-  // User should only have access to this page if they are signed in.
+  // Users should only have access to this page if they are signed in.
   assert(userId !== null);
   const properties = await getProperties(userId);
 
@@ -30,6 +29,12 @@ export default async function Page({ params }: PageProps) {
     property = properties.at(index);
     assert(property !== undefined);
   }
+
+  let reservations = undefined;
+  if (userId !== null && property != null) {
+      reservations = await getPropertyReservations(userId, property.id);
+  }
+  console.log(reservations);
 
   // Get data for "Nights Occupied":
   let nights_occupied = null;

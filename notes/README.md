@@ -11,4 +11,6 @@
   displaying the information of the logged in user without redirecting back to
   the sign in page.
 
--
+- In get_reservations_for_month, Google API can return "Caller does not have permissions"
+  since I am using a test account instead of the actual Bojano Homes account.
+  Have Michael give me the API/Service Account key for the Bojano Homes account instead.
