@@ -32,7 +32,7 @@ export default async function Page({ params }: PageProps) {
 
   let reservations = undefined;
   if (userId !== null && property != null) {
-      reservations = await getPropertyReservations(userId, property.id);
+    reservations = await getPropertyReservations(userId, property.id);
   }
   console.log(reservations);
 

@@ -58,6 +58,11 @@ export async function getPropertyReservations(
   const response = await fetch(
     `${baseUrl}/api/v1/users/${userId}/properties/${propertyId}/reservations/${currentYear}/${currentMonth}`,
   );
-  const data = await response.json();
-  return data;
+  try {
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log(`Failed to get property reservations`);
+    return [];
+  }
 }

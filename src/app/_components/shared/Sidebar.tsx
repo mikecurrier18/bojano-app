@@ -9,8 +9,7 @@ import { PropertySelector } from "@components/shared/PropertySelector";
 import { getProperties } from "@lib/properties";
 
 /**
- * Displays which property to show information for, and the site navigation
- * as a menu on the side of the page.
+ * Displays the site navigation as a menu on the side of the page.
  */
 export async function Sidebar() {
   const { userId } = await auth();
@@ -18,7 +17,10 @@ export async function Sidebar() {
   const properties = await getProperties(userId!);
 
   return (
-    <aside className="flex h-screen w-72 flex-col gap-y-4 shadow-md shadow-purple-200/50">
+    <aside
+      id="sidebar"
+      className="fixed hidden h-screen w-screen flex-col gap-y-4 bg-white shadow-md shadow-purple-200/50 md:static md:flex md:w-72"
+    >
       <PropertySelector properties={properties} />
       <Pages />
     </aside>
@@ -36,8 +38,8 @@ type NavLink = {
   icon: string;
 };
 
-// The navigation links are being exported so the page at '/' can redirect
-// to the first page in this list.
+// The navigation links are being exported so the page at '/properties/[i]'
+// can redirect to the first page in this list.
 export const navigationLinks: NavLink[] = [
   {
     label: "Summary",

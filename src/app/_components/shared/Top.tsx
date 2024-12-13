@@ -5,6 +5,8 @@ import Link from "next/link";
 
 import { SignedIn, UserButton } from "@clerk/nextjs";
 
+import { MenuButton } from "./MenuButton";
+
 export default async function Top() {
   return (
     <div className="fixed top-0 flex h-16 w-screen items-center justify-between bg-[#493857]">
@@ -19,11 +21,14 @@ export default async function Top() {
           />
         </Link>
       </div>
-      <SignedIn>
-        <div className="purple-dark px-10">
-          <UserButton showName />
-        </div>
-      </SignedIn>
+      <div className="align-center flex flex-row">
+        <SignedIn>
+          <div className="purple-dark flex content-center px-10">
+            <UserButton showName />
+          </div>
+        </SignedIn>
+        <MenuButton />
+      </div>
     </div>
   );
 }

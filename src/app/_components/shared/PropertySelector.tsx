@@ -31,9 +31,9 @@ export function PropertySelector({ properties }: { properties: Property[] }) {
         name="property"
         id="property-select"
         onChange={(event) => {
-          const propertyNameSelected = event.target?.value;
+          const nextProperty = event.target?.value;
           const match = properties.findIndex(
-            (p) => p.name === propertyNameSelected,
+            (p) => p.name === nextProperty,
           );
 
           if (match === -1) {
@@ -49,6 +49,8 @@ export function PropertySelector({ properties }: { properties: Property[] }) {
           parts.shift();
           parts.shift();
           const remainder = parts.join("/");
+
+          // Redirect to the new page.
           return router.push(`/properties/${match}/${remainder}`);
         }}
       >
