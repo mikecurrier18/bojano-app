@@ -12,9 +12,7 @@ import {
  */
 
 // These are routes that require users to be authenticated prior to entering.
-const isProtectedRoute = createRouteMatcher([
-  "/((?!sign-in|sign-up).*)",
-]);
+const isProtectedRoute = createRouteMatcher(["/((?!sign-in|sign-up).*)"]);
 
 /**
  * @param auth TODO

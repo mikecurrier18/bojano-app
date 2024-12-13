@@ -1,7 +1,8 @@
-import { auth } from "@clerk/nextjs/server";
 import { headers } from "next/headers";
 import Image from "next/image";
 import Link from "next/link";
+
+import { auth } from "@clerk/nextjs/server";
 
 import {
   type Property,
@@ -17,7 +18,9 @@ async function getProperties(userId: string): Promise<Property[]> {
   const baseURL = process.env.NODE_ENV === "development"
     ? "http://0.0.0.0:1140"
     : "https://bojano-app.vercel.app";
-  const response = await fetch(`${baseURL}/api/v1/users/${userId}/properties`);
+  const response = await fetch(
+    `${baseURL}/api/v1/users/${userId}/properties`,
+  );
   const properties = await response.json();
   return properties;
 }
@@ -26,13 +29,13 @@ async function getProperties(userId: string): Promise<Property[]> {
  * Displays which property to show information for, and the site navigation
  * as a menu on the side of the page.
  */
-export default async function Sidebar() {
+export async function Sidebar() {
   const { userId } = await auth();
   // Users can only access this page after they have signed in.
   const properties = await getProperties(userId!);
 
   return (
-    <aside className="flex flex-col h-screen w-72 shadow-md gap-y-4 shadow-purple-200/50">
+    <aside className="flex h-screen w-72 flex-col gap-y-4 shadow-md shadow-purple-200/50">
       <PropertySelector properties={properties} />
       <Pages />
     </aside>
@@ -95,11 +98,9 @@ function Pages() {
               // are not going to change.
               <li
                 key={index}
-                className={`flex-center w-full whitespace-nowrap
-                    bg-cover transition-all hover:bg-purple-50 hover:text-black
-                    ${
+                className={`flex-center w-full whitespace-nowrap bg-cover transition-all hover:bg-purple-50 hover:text-black ${
                   isCurrentPage
-                    ? "text-[#493857] bg-purple-50 shadow-inner"
+                    ? "bg-purple-50 text-[#493857] shadow-inner"
                     : "text-black"
                 }`}
               >

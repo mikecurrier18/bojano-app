@@ -11,14 +11,19 @@ export type Property = {
   name: string;
 };
 
-export function PropertySelector(
-  { properties }: { properties: Property[]; setProperty: Function },
-) {
+export function PropertySelector({
+  properties,
+}: {
+  properties: Property[];
+  setProperty: Function;
+}) {
   const { property, setProperty } = useProperty();
 
   return (
-    <div className="flex flex-col my-4 px-4">
-      <label htmlFor="property-select">Displaying information for:</label>
+    <div className="my-4 flex flex-col px-4">
+      <label htmlFor="property-select">
+        Displaying information for:
+      </label>
 
       <select
         name="property"
@@ -28,10 +33,14 @@ export function PropertySelector(
             `Changing property from '${property}' to '${event.target.value}'`,
           );
           const propertyNameSelected = event.target?.value;
-          const match = properties.find((p) => p.name === propertyNameSelected);
+          const match = properties.find(
+            (p) => p.name === propertyNameSelected,
+          );
 
           if (match === undefined) {
-            console.error("failed to change which property is being displayed");
+            console.error(
+              "failed to change which property is being displayed",
+            );
             return;
           }
 

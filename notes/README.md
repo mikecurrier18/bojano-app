@@ -10,3 +10,5 @@
 - When a user is signed out, the components do not refresh, so the page stays
   displaying the information of the logged in user without redirecting back to
   the sign in page.
+
+-
