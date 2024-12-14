@@ -23,7 +23,7 @@ export default async function Top() {
       </div>
       <div className="align-center flex flex-row">
         <SignedIn>
-          <div className="purple-dark flex content-center px-10">
+          <div className="purple-dark flex content-center px-4 md:px-10">
             <UserButton showName />
           </div>
         </SignedIn>

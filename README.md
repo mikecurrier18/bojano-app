@@ -1,5 +1,9 @@
 # Dashboard
 
+![Screenshot of the Summary page](./_static/screenshot-summary-page.png)
+
+## Introduction
+
 **Dashboard** allows Bojano Homes' clients access to detailed information about
 their properties in the form of a web dashboard.
 

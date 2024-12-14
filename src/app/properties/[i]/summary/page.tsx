@@ -37,16 +37,16 @@ export default async function Page({ params }: PageProps) {
   console.log(reservations);
 
   // Get data for "Nights Occupied":
-  let nights_occupied = null;
+  let nights_occupied = 0;
 
   // Get data for "Occupancy Rate":
   let occupancy_rate = (nights_occupied || 0) / 30;
 
   // Get data for "Net Rent":
-  let net_rent = null;
+  let net_rent = 0;
 
   // Get data for "Expenses":
-  let expenses = null;
+  let expenses = 0;
 
   return (
     <>
